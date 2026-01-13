@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: flexspace-postgres
+    environment:
+      POSTGRES_USER: flexspace
+      POSTGRES_PASSWORD: flexspace_dev_password
+      POSTGRES_DB: flexspace
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
