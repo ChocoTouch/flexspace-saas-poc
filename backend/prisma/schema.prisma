@@ -33,7 +33,7 @@ enum Role {
 // Space Model
 model Space {
   id        String    @id @default(uuid())
-  name      String
+  name      String    @unique
   type      SpaceType
   capacity  Int
   floor     String?
