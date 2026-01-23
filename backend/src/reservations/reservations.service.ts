@@ -84,7 +84,7 @@ export class ReservationsService {
             },
           });
 
-          // TODO Jour 7: Envoyer notification à l'utilisateur
+          // TODO : Envoyer notification à l'utilisateur
           console.log(`Reservation ${conflict.id} cancelled by manager override`);
         } else {
           throw new ForbiddenException(

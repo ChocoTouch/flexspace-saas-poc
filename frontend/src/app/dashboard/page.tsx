@@ -105,7 +105,19 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-600 mt-1">
                     Réserver des espaces de travail
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">Jour 5 - À venir</p>
+                  <div className="flex gap-2 mt-3">
+                    <Button className="flex-1" size="sm" asChild>
+                      <Link href="/spaces">Réserver</Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      size="sm"
+                      asChild
+                    >
+                      <Link href="/my-reservations">Mes réservations</Link>
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="p-4 bg-green-50 rounded-lg">

@@ -30,7 +30,7 @@ interface LoginResponse {
 interface Space {
   id: string;
   name: string;
-  type: 'DESK' | 'MEETING_ROOM' | 'COLLABORATIVE_SPACE';
+  type: "DESK" | "MEETING_ROOM" | "COLLABORATIVE_SPACE";
   capacity: number;
   floor?: string;
   building?: string;
@@ -43,7 +43,7 @@ interface Space {
 
 interface CreateSpaceData {
   name: string;
-  type: 'DESK' | 'MEETING_ROOM' | 'COLLABORATIVE_SPACE';
+  type: "DESK" | "MEETING_ROOM" | "COLLABORATIVE_SPACE";
   capacity: number;
   floor?: string;
   building?: string;
@@ -57,6 +57,58 @@ interface SpaceFilters {
   floor?: string;
   building?: string;
   search?: string;
+}
+
+interface Reservation {
+  id: string;
+  userId: string;
+  spaceId: string;
+  startTime: string;
+  endTime: string;
+  status: "ACTIVE" | "CANCELLED" | "COMPLETED";
+  qrCode?: string;
+  qrSignature?: string;
+  createdAt: string;
+  updatedAt: string;
+  space: Space;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+  };
+}
+
+interface CreateReservationData {
+  spaceId: string;
+  startTime: string;
+  endTime: string;
+  overrideConflict?: boolean;
+}
+
+interface AvailabilityCheck {
+  available: boolean;
+  space: {
+    id: string;
+    name: string;
+    type: string;
+    capacity: number;
+  };
+  requestedSlot: {
+    startTime: string;
+    endTime: string;
+  };
+  conflictingReservations: Array<{
+    id: string;
+    startTime: string;
+    endTime: string;
+    user: {
+      firstName: string;
+      lastName: string;
+      role: string;
+    };
+  }>;
 }
 
 class ApiClient {
@@ -189,7 +241,95 @@ class ApiClient {
       throw new Error(error.message || "Failed to delete space");
     }
   }
+
+  async createReservation(
+    data: CreateReservationData,
+    token: string,
+  ): Promise<Reservation> {
+    const response = await fetch(`${API_URL}/reservations`, {
+      method: "POST",
+      headers: this.getHeaders(token),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw error; // Inclut conflicts si présents
+    }
+
+    return response.json();
+  }
+
+  async getMyReservations(
+    token: string,
+    filters?: {
+      status?: string;
+      startDate?: string;
+      endDate?: string;
+    },
+  ): Promise<Reservation[]> {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+    }
+
+    const url = `${API_URL}/reservations${params.toString() ? `?${params}` : ""}`;
+    const response = await fetch(url, {
+      headers: this.getHeaders(token),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch reservations");
+    }
+
+    return response.json();
+  }
+
+  async cancelReservation(id: string, token: string): Promise<Reservation> {
+    const response = await fetch(`${API_URL}/reservations/${id}`, {
+      method: "DELETE",
+      headers: this.getHeaders(token),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to cancel reservation");
+    }
+
+    return response.json();
+  }
+
+  async checkAvailability(data: {
+    spaceId: string;
+    startTime: string;
+    endTime: string;
+  }, token: string): Promise<AvailabilityCheck> {
+    const response = await fetch(`${API_URL}/reservations/check-availability`, {
+      method: "POST",
+      headers: this.getHeaders(token),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to check availability");
+    }
+
+    return response.json();
+  }
 }
 
 export const api = new ApiClient();
-export type { User, RegisterData, LoginData, LoginResponse, Space, CreateSpaceData, SpaceFilters };
+export type {
+  User,
+  RegisterData,
+  LoginData,
+  LoginResponse,
+  Space,
+  CreateSpaceData,
+  SpaceFilters,
+  Reservation,
+  CreateReservationData,
+  AvailabilityCheck,
+};

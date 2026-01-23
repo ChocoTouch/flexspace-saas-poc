@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { api, Space } from '@/lib/api';
+import { api, Space, SpaceFilters } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/auth-context';
 
-const spaceTypeLabels = {
+const spaceTypeLabels: Record<Space['type'], string> = {
   DESK: '🪑 Bureau',
   MEETING_ROOM: '🏢 Salle de réunion',
   COLLABORATIVE_SPACE: '🤝 Espace collaboratif',
@@ -23,15 +23,22 @@ export default function SpacesPage() {
 
   useEffect(() => {
     loadSpaces();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeFilter]);
 
   const loadSpaces = async () => {
     try {
       setLoading(true);
-      const data = await api.getSpaces({ 
-        type: typeFilter || undefined,
-        search: search || undefined 
-      });
+      const filters: SpaceFilters = {};
+      
+      if (typeFilter) {
+        filters.type = typeFilter;
+      }
+      if (search) {
+        filters.search = search;
+      }
+
+      const data = await api.getSpaces(filters);
       setSpaces(data);
     } catch (error) {
       console.error('Error loading spaces:', error);
@@ -86,7 +93,7 @@ export default function SpacesPage() {
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
-              
+
               <select
                 className="px-4 py-2 border rounded-md"
                 value={typeFilter}
@@ -130,9 +137,7 @@ export default function SpacesPage() {
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <span className="font-medium w-20">Type:</span>
-                      <span className="text-gray-600">
-                        {spaceTypeLabels[space.type]}
-                      </span>
+                      <span className="text-gray-600">{spaceTypeLabels[space.type]}</span>
                     </div>
 
                     {space.building && (
@@ -152,9 +157,20 @@ export default function SpacesPage() {
                       </span>
                     </div>
 
-                    <Button className="w-full mt-4" asChild>
-                      <Link href={`/spaces/${space.id}`}>Voir détails</Link>
-                    </Button>
+                    <div className="flex gap-2">
+                      {user ? (
+                        <Button className="flex-1" asChild>
+                          <Link href={`/spaces/${space.id}/book`}>Réserver</Link>
+                        </Button>
+                      ) : (
+                        <Button className="flex-1" asChild>
+                          <Link href="/login">Connexion pour réserver</Link>
+                        </Button>
+                      )}
+                      <Button variant="outline" asChild>
+                        <Link href={`/spaces/${space.id}`}>Détails</Link>
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
