@@ -111,6 +111,44 @@ interface AvailabilityCheck {
   }>;
 }
 
+interface QRResult {
+  qrCode: string;
+  qrSignature: string;
+  payload: {
+    reservationId: string;
+    userId: string;
+    spaceId: string;
+    validFrom: string;
+    validUntil: string;
+    iat: number;
+  };
+}
+
+interface VerifyQRResult {
+  valid: boolean;
+  accessGranted: boolean;
+  reason?: string;
+  reservation?: {
+    id: string;
+    space: {
+      id: string;
+      name: string;
+      floor?: string;
+      building?: string;
+    };
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      role: string;
+    };
+    validFrom: string;
+    validUntil: string;
+  };
+  message: string;
+  accessTime: string;
+}
+
 class ApiClient {
   private getHeaders(token?: string): HeadersInit {
     const headers: HeadersInit = {
@@ -301,11 +339,14 @@ class ApiClient {
     return response.json();
   }
 
-  async checkAvailability(data: {
-    spaceId: string;
-    startTime: string;
-    endTime: string;
-  }, token: string): Promise<AvailabilityCheck> {
+  async checkAvailability(
+    data: {
+      spaceId: string;
+      startTime: string;
+      endTime: string;
+    },
+    token: string,
+  ): Promise<AvailabilityCheck> {
     const response = await fetch(`${API_URL}/reservations/check-availability`, {
       method: "POST",
       headers: this.getHeaders(token),
@@ -314,6 +355,36 @@ class ApiClient {
 
     if (!response.ok) {
       throw new Error("Failed to check availability");
+    }
+
+    return response.json();
+  }
+
+  async generateQRCode(
+    reservationId: string,
+    token: string,
+  ): Promise<QRResult> {
+    const response = await fetch(`${API_URL}/qr/generate/${reservationId}`, {
+      headers: this.getHeaders(token),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to generate QR code");
+    }
+
+    return response.json();
+  }
+
+  async verifyQRCode(qrData: string): Promise<VerifyQRResult> {
+    const response = await fetch(`${API_URL}/qr/verify`, {
+      method: "POST",
+      headers: this.getHeaders(),
+      body: JSON.stringify({ qrData }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to verify QR code");
     }
 
     return response.json();
@@ -332,4 +403,6 @@ export type {
   Reservation,
   CreateReservationData,
   AvailabilityCheck,
+  QRResult,
+  VerifyQRResult
 };

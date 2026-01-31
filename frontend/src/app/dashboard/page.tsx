@@ -57,11 +57,16 @@ export default function DashboardPage() {
           <div className="text-2xl mb-2">⚙️</div>
           <h3 className="font-semibold">Administration</h3>
           <p className="text-sm text-gray-600 mt-1">
-            Gérer les espaces et utilisateurs
+            Gérer les espaces et scanner les QR Codes
           </p>
-          <Button className="mt-3 w-full" asChild>
-            <Link href="/admin/spaces">Gérer les espaces</Link>
-          </Button>
+          <div className="flex gap-2 mt-3">
+            <Button className="flex-1" size="sm" asChild>
+              <Link href="/admin/spaces">Espaces</Link>
+            </Button>
+            <Button variant="outline" className="flex-1" size="sm" asChild>
+              <Link href="/admin/scanner">🔍 Scanner</Link>
+            </Button>
+          </div>
         </div>
       )}
 
@@ -126,7 +131,12 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-600 mt-1">
                     Accès sécurisé par QR
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">Jour 6 - À venir</p>
+                  <p className="text-xs text-green-700 font-medium mt-2">
+                    ✅ Fonctionnel - HMAC-SHA256
+                  </p>
+                  <Button className="mt-3 w-full" size="sm" asChild>
+                    <Link href="/my-reservations">Voir mes QR Codes</Link>
+                  </Button>
                 </div>
 
                 {(user.role === "MANAGER" || user.role === "ADMIN") && (
