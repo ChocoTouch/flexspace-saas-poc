@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { SpacesModule } from './spaces/spaces.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { QrModule } from './qr/qr.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     AuthModule,
     SpacesModule,
     ReservationsModule,
+    QrModule,
   ],
   controllers: [AppController],
   providers: [

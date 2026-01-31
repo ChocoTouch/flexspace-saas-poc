@@ -110,8 +110,8 @@ export class SpacesService {
 
     // Validation des horaires si modifiés
     if (dto.openTime || dto.closeTime) {
-      const openTime = (dto.openTime ?? existingSpace.openTime) as string;
-      const closeTime = (dto.closeTime ?? existingSpace.closeTime) as string;
+      const openTime = dto.openTime ?? existingSpace.openTime;
+      const closeTime = dto.closeTime ?? existingSpace.closeTime;
       this.validateTimeRange(openTime, closeTime);
     }
 

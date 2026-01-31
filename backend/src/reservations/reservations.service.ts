@@ -8,10 +8,14 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReservationDto, QueryReservationsDto, CheckAvailabilityDto } from './dto';
 import { Role, Space, Prisma } from '@prisma/client';
+import { QrService } from '../qr/qr.service';
 
 @Injectable()
 export class ReservationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private qrService: QrService,
+  ) {}
 
   /**
    * Créer une nouvelle réservation
@@ -117,7 +121,21 @@ export class ReservationsService {
       },
     });
 
-    return reservation;
+    // Générer le QR Code automatiquement
+    try {
+      const qrResult = await this.qrService.generateQRCode(reservation.id);
+
+      // Retourner la réservation avec le QR Code
+      return {
+        ...reservation,
+        qrCode: qrResult.qrCode,
+        qrSignature: qrResult.qrSignature,
+      };
+    } catch (error) {
+      console.error('Failed to generate QR code:', error);
+      // Retourner quand même la réservation sans QR
+      return reservation;
+    }
   }
 
   /**

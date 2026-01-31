@@ -63,8 +63,8 @@ model Reservation {
   startTime   DateTime
   endTime     DateTime
   status      BookingStatus @default(ACTIVE)
-  qrCode      String?       @unique
-  qrSignature String?
+  qrCode      String?       
+  qrSignature String?       @unique
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
