@@ -19,7 +19,6 @@ services:
       - ./backend/.env
     environment:
       # Infos DB pour le Dockerfile safe
-      DATABASE_URL: ${DATABASE_PUBLIC_URL:-postgres://flexspace:flexspace_dev_password@postgres:5432/flexspace}
       PORT: 3000
       NODE_ENV: production
     depends_on:
