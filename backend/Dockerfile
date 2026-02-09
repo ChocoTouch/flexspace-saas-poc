@@ -19,6 +19,9 @@ COPY . .
 # Génère Prisma Client
 RUN npx prisma generate
 
+# Seed avec DB publique
+RUN DATABASE_URL=$DATABASE_URL_PUBLIC npx prisma db seed
+
 # Build NestJS
 RUN npm run build
 
@@ -41,9 +44,5 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 # Expose le port
 EXPOSE 3000
 
-# Commande de démarrage : build + seed + start
-CMD ["sh", "-c", "\
-  echo '🌱 Running Prisma generate...' && npx prisma generate && \
-  echo '🌱 Seeding database...' && node prisma/seed.ts && \
-  echo '🚀 Starting app...' && node dist/src/main.js \
-"]
+# Commande de démarrage 
+CMD ["node", "dist/src/main.js"]
