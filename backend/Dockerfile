@@ -41,4 +41,4 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 EXPOSE 3000
 
 # Commande de démarrage 
-CMD ["sh", "-c", "echo $DATABASE_URL && node dist/src/main.js"]
+CMD ["node", "dist/main.js"]
