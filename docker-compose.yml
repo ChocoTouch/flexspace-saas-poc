@@ -18,6 +18,9 @@ services:
     env_file:
       - ./backend/.env
     environment:
+      # Infos DB pour le Dockerfile safe
+      DB_HOST: postgres
+      DB_PORT: 5432
       DATABASE_URL: postgres://flexspace:flexspace_dev_password@postgres:5432/flexspace
       PORT: 3000
       NODE_ENV: production
@@ -26,5 +29,6 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+
 volumes:
   postgres_data:

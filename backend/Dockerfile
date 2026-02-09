@@ -41,5 +41,13 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 # Expose le port
 EXPOSE 3000
 
-# Commande de démarrage
-CMD ["node", "dist/src/main.js"]
+## Script safe startup : attendre DB, migrations, seed, puis lancer app
+CMD sh -c "\
+  until nc -z -v -w30 \$DB_HOST \$DB_PORT; do \
+    echo '⏳ Waiting for database...'; \
+    sleep 3; \
+  done; \
+  echo '✅ Database is up'; \
+  npx prisma migrate deploy; \
+  npx ts-node prisma/seed.ts; \
+  node dist/src/main.js"
