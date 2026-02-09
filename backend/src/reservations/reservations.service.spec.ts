@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { QrService } from '../qr/qr.service';
 
 describe('ReservationsService', () => {
   let service: ReservationsService;
@@ -17,6 +18,10 @@ describe('ReservationsService', () => {
     },
   };
 
+  const mockQrService = {
+    generateQRCode: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -24,6 +29,10 @@ describe('ReservationsService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: QrService,
+          useValue: mockQrService,
         },
       ],
     }).compile();
@@ -56,6 +65,11 @@ describe('ReservationsService', () => {
         startTime: '2026-02-24T09:00:00.000Z',
         endTime: '2026-02-24T11:00:00.000Z',
       };
+
+      mockQrService.generateQRCode.mockResolvedValue({
+        qrCode: 'fake-qr',
+        qrSignature: 'fake-signature',
+      });
 
       mockPrismaService.reservation.findMany.mockResolvedValue([]); // No conflicts
       mockPrismaService.reservation.create.mockResolvedValue({
