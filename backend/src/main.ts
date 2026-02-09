@@ -26,9 +26,10 @@ async function bootstrap() {
 
   // Attendre la DB
   const prisma = app.get(PrismaService);
+  const maxRetries = 30; // plus de tentatives
+  let retries = maxRetries;
 
-  let retries = 10;
-  while (retries) {
+  while (retries > 0) {
     try {
       await prisma.$connect();
       console.log('✅ Database connected');
@@ -36,9 +37,14 @@ async function bootstrap() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       retries--;
-      console.log('⏳ Waiting for database...');
-      await new Promise((res) => setTimeout(res, 3000));
+      console.log(`⏳ Waiting for database... (${maxRetries - retries}/${maxRetries})`);
+      await new Promise((res) => setTimeout(res, 5000)); // délai plus long
     }
+  }
+
+  if (!retries) {
+    console.error('❌ Could not connect to the database. Exiting...');
+    process.exit(1); // quitte le conteneur si DB indisponible
   }
 
   const port = process.env.PORT || 3000;
