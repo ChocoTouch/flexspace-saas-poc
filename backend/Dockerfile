@@ -19,12 +19,8 @@ COPY . .
 # Génère Prisma Client
 RUN npx prisma generate
 
-# Seed avec DB publique
-RUN DATABASE_URL=$DATABASE_URL_PUBLIC npx prisma db seed
-
 # Build NestJS
 RUN npm run build
-
 
 # === Étape 2 : Image finale ===
 FROM node:22-alpine
