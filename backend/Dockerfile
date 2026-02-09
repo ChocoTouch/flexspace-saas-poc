@@ -45,4 +45,4 @@ RUN chmod +x entrypoint.sh
 EXPOSE 3000
 
 # Commande de démarrage
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
