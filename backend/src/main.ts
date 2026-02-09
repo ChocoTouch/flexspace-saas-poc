@@ -24,9 +24,15 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix('api');
 
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+
+  console.log(`🚀 FlexSpace API running on port ${port}`);
+  console.log(`📚 Health check: http://localhost:${port}/api/health`);
+
   // Attendre la DB
   const prisma = app.get(PrismaService);
-  const maxRetries = 30; // plus de tentatives
+  const maxRetries = 30;
   let retries = maxRetries;
 
   while (retries > 0) {
@@ -42,15 +48,8 @@ async function bootstrap() {
     }
   }
 
-  if (!retries) {
-    console.error('❌ Could not connect to the database. Exiting...');
-    process.exit(1); // quitte le conteneur si DB indisponible
+  if (retries === 0) {
+    console.error('❌ Could not connect to the database. Continuing without DB...');
   }
-
-  const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0');
-
-  console.log(`🚀 FlexSpace API running on port ${port}`);
-  console.log(`📚 Health check: http://localhost:${port}/api/health`);
 }
 bootstrap();
