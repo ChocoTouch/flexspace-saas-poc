@@ -1,17 +1,12 @@
 #!/bin/sh
 set -e
 
-# Vérifie DATABASE_URL
-if [ -z "$DATABASE_URL" ]; then
-  echo "❌ DATABASE_URL n'est pas défini"
-  exit 1
-fi
-
-# Génère Prisma Client si pas déjà fait
-if [ ! -d "node_modules/@prisma/client" ]; then
-  echo "⏳ Generating Prisma client..."
-  npx prisma generate
-fi
+echo "DATABASE_URL=$DATABASE_URL"
+echo "NODE_ENV=$NODE_ENV"
+echo "JWT_SECRET=$JWT_SECRET"
+node -v
+npm -v
+ls -l dist
 
 # Démarre l’app
 echo "🚀 Starting NestJS app..."
