@@ -11,5 +11,20 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  app:
+    build: 
+      context: ./backend
+    container_name: flexspace-app
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgres://flexspace:flexspace_dev_password@postgres:5432/flexspace
+      PORT: 3000
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
 volumes:
   postgres_data:
