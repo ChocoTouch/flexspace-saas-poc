@@ -16,11 +16,12 @@ RUN npm ci
 # Copie tout le code source
 COPY . .
 
+# Génère Prisma Client
+RUN npx prisma generate
+
 # Build NestJS
 RUN npm run build
 
-# Génère Prisma Client
-RUN npx prisma generate
 
 # === Étape 2 : Image finale ===
 FROM node:22-alpine
