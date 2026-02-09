@@ -1,10 +1,13 @@
 #!/bin/sh
 set -e
 
-echo "📦 Starting app..."
+echo "DATABASE_URL=$DATABASE_URL"
+echo "NODE_ENV=$NODE_ENV"
+echo "JWT_SECRET=$JWT_SECRET"
+node -v
+npm -v
+ls -l dist
 
-# Générer Prisma Client
-npx prisma generate
-
-# Lancer NestJS en mode production
-exec node dist/main.js
+# Démarre l’app
+echo "🚀 Starting NestJS app..."
+node dist/main.js
