@@ -1,176 +1,198 @@
-# 🏢 FlexSpace - Intelligent Workspace Booking System
 
-[![Backend CI](https://github.com/[USER]/flexspace-saas-poc/workflows/Backend%20CI%2FCD/badge.svg)](https://github.com/[USER]/flexspace-saas-poc/actions)
-[![Frontend CI](https://github.com/[USER]/flexspace-saas-poc/workflows/Frontend%20CI%2FCD/badge.svg)](https://github.com/[USER]/flexspace-saas-poc/actions)
+# 🏢 FlexSpace - POC SaaS de réservation d'espaces
 
-POC d'un SaaS de gestion d'espaces flex office avec réservation intelligente, détection de conflits, et contrôle d'accès via QR Code.
+POC d'une application de gestion d'espaces flex office avec authentification multi-rôles, réservation avec détection de conflits, et contrôle d'accès via QR code.
 
-## 🌐 Live Demo
+## 🌐 Déploiements
 
-- **Frontend**: https://flexspace-poc.vercel.app
-- **Backend API**: https://flexspace-api.up.railway.app/api
-- **API Health**: https://flexspace-api.up.railway.app/api/health
+-   **Frontend (Vercel)**: [https://flexspace-saas-poc-website.vercel.app/](https://flexspace-poc.vercel.app/)
+    
+-   **Backend API (Railway)**: [https://flexspace-saas-poc-production.up.railway.app/api](https://flexspace-api.up.railway.app/api)
+    
+-   **Healthcheck**: [https://flexspace-saas-poc-production.up.railway.app/api/health](https://flexspace-api.up.railway.app/api/health)
+    
 
-## 🎯 Fonctionnalités (POC)
+## ✅ Fonctionnalités réellement présentes dans le code
 
-- ✅ Authentification multi-rôles (Employee, Manager, Admin)
-- ✅ Gestion des espaces (CRUD)
-- ✅ Réservation avec détection de conflits automatique
-- ✅ Priorité manager (override)
-- ✅ Génération QR Code sécurisé (HMAC-SHA256)
-- ✅ Vérification accès en temps réel
-- ✅ Analytics : taux d'occupation, top spaces, heures de pointe
+-   Authentification JWT (register/login/me)
+    
+-   Rôles: `EMPLOYEE`, `MANAGER`, `ADMIN`
+    
+-   CRUD des espaces (admin)
+    
+-   Recherche et filtres d'espaces (public)
+    
+-   Réservations avec détection de conflits
+    
+-   Override de conflit pour manager/admin
+    
+-   Vérification de disponibilité
+    
+-   Annulation de réservation
+    
+-   Génération et vérification QR code signé (HMAC)
+    
+-   Logs d'accès QR
+    
 
-## 🛠️ Tech Stack
+> Note: les analytics avancées (top spaces/heures de pointe) et certaines features roadmap ne sont pas encore implémentées.
+
+## 🛠️ Stack technique
 
 ### Backend
-- **Framework**: NestJS 10 (TypeScript)
-- **ORM**: Prisma 5
-- **Database**: PostgreSQL 15
-- **Auth**: JWT + bcrypt
-- **Validation**: class-validator
+
+-   **NestJS 11**
+    
+-   **TypeScript**
+    
+-   **Prisma 5**
+    
+-   **PostgreSQL 15**
+    
+-   **JWT + bcrypt**
+    
+-   **class-validator / class-transformer**
+    
 
 ### Frontend
-- **Framework**: Next.js 14 (App Router)
-- **UI**: TailwindCSS + shadcn/ui
-- **State**: React Context + TanStack Query (à venir)
-- **Charts**: Recharts (à venir)
 
-### DevOps
-- **Backend Hosting**: Railway
-- **Frontend Hosting**: Vercel
-- **CI/CD**: GitHub Actions
-- **Database**: Railway PostgreSQL
+-   **Next.js 16 (App Router)**
+    
+-   **React 19**
+    
+-   **Tailwind CSS 4**
+    
+-   **shadcn/ui (Radix UI)**
+    
 
-## 🚀 Installation Locale
+### Infra / DevOps
 
-### Prérequis
-- Node.js 20+
-- PostgreSQL 15+ (ou Docker)
-- npm
+-   **Backend hosting**: Railway
+    
+-   **Frontend hosting**: Vercel
+    
+-   **Base de données**: PostgreSQL Railway
+    
+-   **Container local backend**: Dockerfile + docker-compose
+    
 
-### 1. Cloner le repo
-```bash
-git clone https://github.com/[USER]/flexspace-saas-poc.git
-cd flexspace-saas-poc
-```
+## 🚀 Lancer le projet en local
 
-### 2. Backend
+## 1) Prérequis
+
+-   PostgreSQL 15+ (ou docker-compose)
+    
+
+## 2) Backend
+
 ```bash
 cd backend
 npm install
-
-# Copier et configurer .env
 cp .env.example .env
-# Éditez .env avec vos credentials PostgreSQL
 
-# Appliquer migrations
+# applique les migrations
 npx prisma migrate dev
 
-# Lancer en dev
+# démarre l'API
 npm run start:dev
-# API accessible sur http://localhost:3000/api
+# API: http://localhost:3000/api
 ```
 
-### 3. Frontend
-```bash
-cd ../frontend
-npm install
+## 3) Frontend
 
-# Copier et configurer .env
+```bash
+cd frontend
+npm install
 cp .env.example .env.local
 
-# Lancer en dev
-npm run dev
-# App accessible sur http://localhost:3001
+# démarre l'app sur 3001 (pour éviter le conflit avec le backend)
+npm run dev -- -p 3001
+# Front: http://localhost:3001
 ```
 
-## 📚 Documentation
+## 4) Option docker-compose (backend + postgres)
 
-- [Architecture Diagram](./docs/architecture.md)
-- [API Reference](./docs/api.md)
-- [Database Schema](./backend/prisma/schema.prisma)
-- [Deployment Guide](./docs/deployment.md)
+```bash
+docker compose up --build
+```
 
-## 🧪 Tests
+## 📚 Documentation projet
+
+-   [Architecture + standards + analyse critique (FR)](docs/architecture-security-review.md)
+    
+-   [Planning de développement reconstitué (6 jours)](docs/planning-6-jours.md)
+
+-   [Diagramme Entité-Relation](docs/ERDFlexSpace.drawio.png)
+
+-   [Diagramme C4 niveau 1](docs/C4FlexSpaceLVL1.drawio.png)
+    
+-   [Diagramme C4 niveau 2](docs/C4FlexSpaceLVL2.drawio.png)
+
+-   [Diagramme de séquence - Création de réservation](docs/SequenceDiagram1CreateReservation.png)
+
+-   [Diagramme de séquence - Vérification d'accès QR](docs/SequenceDiagram2VerifyQRAccess.png)
+
+-   [Diagramme de séquence - Outrepassement de réservation par manager](docs/SequenceDiagram3ManagerOverride.png)
+
+## 🧪 Vérifications utiles
 
 ### Backend
+
 ```bash
 cd backend
-npm run test          # Unit tests
-npm run test:e2e      # E2E tests
-npm run test:cov      # Coverage
+npm run test
+npm run test:e2e
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm run lint
-npm run build         # Test build
+npm run build
 ```
 
-## 🔐 Sécurité
+## 🔐 Sécurité (état actuel)
 
-- ✅ Passwords hashed avec bcrypt (10 rounds)
-- ✅ JWT avec expiration 24h
-- ✅ QR Code signé HMAC-SHA256
-- ✅ CORS configuré
-- ✅ Input validation (class-validator)
-- ✅ HTTPS enforced (production)
+Déjà en place:
 
-**Vulnérabilités connues (POC)** :
-- ⚠️ Pas de rate limiting
-- ⚠️ Pas de MFA
-- ⚠️ QR Code peut être partagé (pas de one-time use)
+-   Hash bcrypt des mots de passe
+    
+-   JWT signé avec expiration
+    
+-   Validation stricte des DTO (whitelist + forbidNonWhitelisted)
+    
+-   Contrôle d'accès par rôles (guards)
+    
+-   CORS configuré
+    
 
-Voir [docs/security.md](./docs/security.md) pour détails.
+Points à renforcer (POC):
 
-## 📊 Architecture
+-   Rate limiting (login / qr/verify)
+    
+-   Stockage token frontend (préférer cookie HttpOnly au localStorage)
+    
+-   Durcissement CORS production (allowlist stricte)
+    
+-   Contrôle d'autorisation explicite sur génération QR (propriétaire/admin)
+    
 
-### C4 - Containers
-```
-[User] → [Next.js App (Vercel)]
-           ↓ HTTPS/JWT
-       [NestJS API (Railway)]
-           ↓ Prisma
-       [PostgreSQL (Railway)]
-```
+## 🗺️ Roadmap indicative
 
-Diagrammes complets : [docs/architecture.md](./docs/architecture.md)
-
-## 🗺️ Roadmap
-
-### Q1 2026 (Post-POC)
-- [ ] Intégration calendrier (Google/Outlook)
-- [ ] Notifications email/SMS
-- [ ] Réservations récurrentes
-- [ ] Mobile app (React Native)
-
-### Q2 2026
-- [ ] Réservations en équipe
-- [ ] Workflow approbation manager
-- [ ] Gestion visiteurs temporaires
-- [ ] Analytics ML (prédictions)
-
-Roadmap complète : [docs/roadmap.md](./docs/roadmap.md)
-
-## 🤝 Contribution
-
-Les contributions sont bienvenues ! 
-
-1. Fork le projet
-2. Créez une branche feature (`git checkout -b feature/amazing-feature`)
-3. Commit vos changements (`git commit -m 'feat: add amazing feature'`)
-4. Push sur la branche (`git push origin feature/amazing-feature`)
-5. Ouvrez une Pull Request
-
-## 📝 License
-
-MIT License - voir [LICENSE](LICENSE)
+-   Notifications (email/SMS)
+    
+-   Réservations récurrentes
+    
+-   Workflow d'approbation manager
+    
+-   Intégration calendriers (Google/Outlook)
+    
+-   Observabilité avancée (logs/metrics/alerting)
+    
 
 ## 👤 Auteur
 
-**[Anthony Bauchet]**
-- GitHub: [@ChocoTouch](https://github.com/ChocoTouch)
+**Anthony Bauchet**
 
----
+GitHub: [@ChocoTouch](https://github.com/ChocoTouch)
